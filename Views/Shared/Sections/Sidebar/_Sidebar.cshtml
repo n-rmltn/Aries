@@ -18,13 +18,23 @@
                 <span class="ms-2">Home</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Department" ? "active" : "")"
-                asp-controller="Department" asp-action="Index">
-                <i class="bi bi-building"></i>
-                <span class="ms-2">Departments</span>
-            </a>
-        </li>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Department" ? "active" : "")"
+                    asp-controller="Department" asp-action="Index">
+                    <i class="bi bi-building"></i>
+                    <span class="ms-2">Departments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Employee" ? "active" : "")"
+                    asp-controller="Employee" asp-action="Index">
+                    <i class="bi bi-person"></i>
+                    <span class="ms-2">Employee</span>
+                </a>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Privacy" ? "active" : "")"
                 asp-controller="Home" asp-action="Privacy">

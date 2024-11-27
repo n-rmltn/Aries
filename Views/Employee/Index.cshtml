@@ -1,38 +1,22 @@
 @{
-    ViewData["Title"] = "Department";
+    ViewData["Title"] = "Employee";
 }
 
-@model IEnumerable<DepartmentViewModel>
-
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-    @TempData["Success"]
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-}
-
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    @TempData["Error"]
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-}
+@model IEnumerable<EmployeeViewModel>
 
 <div class="card">
     <h5 class="card-header d-flex justify-content-between align-items-center">
-        Departments List
+        Employees List
         <a asp-action="Create" class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> Add New Department
+            <i class="bi bi-plus-lg"></i> Add New Employee
         </a>
     </h5>
     <div class="table-responsive text-nowrap">
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th class="col-5">Department</th>
-                    <th class="col-4">Employee Count</th>
+                    <th class="col-5">Employee</th>
+                    <th class="col-4">Department</th>
                     <th class="col-1">Actions</th>
                 </tr>
             </thead>
@@ -40,11 +24,9 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td><span>@item.Name</span></td>
                         <td>
-                            <span>@item.Name</span>
-                        </td>
-                        <td>
-                            <span class="badge rounded-pill bg-label-info">@item.EmployeeCount</span>
+                            <span class="badge rounded-pill bg-label-primary">@item.DepartmentName</span>
                         </td>
                         <td>
                             <div class="dropdown">
@@ -69,7 +51,7 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -78,11 +60,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete department "<span id="departmentName"></span>"?
+                Are you sure you want to delete employee "<span id="employeeName"></span>"?
             </div>
             <div class="modal-footer">
                 <form id="deleteForm" asp-action="Delete" method="post">
-                    <input type="hidden" id="departmentId" name="id" />
+                    <input type="hidden" id="employeeId" name="id" />
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
@@ -94,8 +76,8 @@
 @section Scripts {
     <script>
         function showDeleteModal(id, name) {
-            document.getElementById('departmentId').value = id;
-            document.getElementById('departmentName').textContent = name;
+            document.getElementById('employeeId').value = id;
+            document.getElementById('employeeName').textContent = name;
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
     </script>

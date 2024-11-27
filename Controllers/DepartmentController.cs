@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 using Aries.Models;
 using Aries.Repositories;
 using Aries.Services.Interfaces;
 
 namespace Aries.Controllers;
 
+[Authorize]
 public class DepartmentController : Controller
 {
     private readonly IDepartmentService _departmentService;
@@ -36,7 +39,8 @@ public class DepartmentController : Controller
 
         if (await _departmentService.CreateAsync(department))
         {
-            TempData["Success"] = "Department created successfully";
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = "Department created successfully";
             return RedirectToAction(nameof(Index));
         }
 
@@ -58,7 +62,8 @@ public class DepartmentController : Controller
 
         if (await _departmentService.UpdateAsync(department))
         {
-            TempData["Success"] = "Department updated successfully";
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = "Department updated successfully";
             return RedirectToAction(nameof(Index));
         }
 
@@ -71,11 +76,13 @@ public class DepartmentController : Controller
     {
         if (await _departmentService.DeleteAsync(id))
         {
-            TempData["Success"] = "Department deleted successfully";
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = "Department deleted successfully";
         }
         else
         {
-            TempData["Error"] = "Cannot delete department with employees";
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "Cannot delete department with employees";
         }
         return RedirectToAction(nameof(Index));
     }
