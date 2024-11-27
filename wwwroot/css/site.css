@@ -68,11 +68,50 @@ body.sidebar-collapsed {
   padding: 10px;
   position: absolute;
   right: -40px;
-  top: 10px;
+  top: 3.5rem;
   background: #fff;
   border-radius: 0 4px 4px 0;
   border: 1px solid #ddd;
   border-left: none;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(124, 125, 182, 0.06);
+}
+
+.badge.bg-label-primary {
+  background-color: #e7e7ff !important;
+  color: #696cff !important;
+}
+
+.badge.bg-label-success {
+  background-color: #e8fadf !important;
+  color: #71dd37 !important;
+}
+
+.badge.bg-label-warning {
+  background-color: #fff5e0 !important;
+  color: #ffab00 !important;
+}
+
+.badge.bg-label-info {
+  background-color: #e0f4ff !important;
+  color: #03c3ec !important;
+}
+
+.dropdown-toggle.hide-arrow::after {
+  display: none;
+}
+
+.card {
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+  border: 0;
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid #d9dee3;
+  padding: 1.5rem;
 }
 
 @media (max-width: 768px) {
