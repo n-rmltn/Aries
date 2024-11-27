@@ -7,11 +7,24 @@ document.addEventListener("DOMContentLoaded", function () {
   const sidebarToggle = document.getElementById("sidebar-toggle");
   const sidebar = document.querySelector(".sidebar");
 
-  // Load saved state
-  const sidebarCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
-  if (sidebarCollapsed) {
-    body.classList.add("sidebar-collapsed");
+  // Load saved state based on viewport
+  function applySidebarState() {
+    const sidebarCollapsed =
+      localStorage.getItem("sidebar-collapsed") === "true";
+    if (window.innerWidth <= 768) {
+      // Mobile: sidebar collapsed by default unless explicitly opened
+      body.classList.toggle("sidebar-collapsed", !sidebarCollapsed);
+    } else {
+      // Desktop: sidebar open by default unless explicitly collapsed
+      body.classList.toggle("sidebar-collapsed", sidebarCollapsed);
+    }
   }
+
+  // Apply initial state
+  applySidebarState();
+
+  // Reapply on resize
+  window.addEventListener("resize", applySidebarState);
 
   // Toggle handler
   sidebarToggle?.addEventListener("click", () => {
@@ -20,6 +33,21 @@ document.addEventListener("DOMContentLoaded", function () {
       "sidebar-collapsed",
       body.classList.contains("sidebar-collapsed")
     );
+  });
+
+  // Click outside handler for mobile
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth <= 768) {
+      // If sidebar is visible (shown) and click is outside
+      if (
+        !sidebar.contains(e.target) &&
+        !sidebarToggle.contains(e.target) &&
+        body.classList.contains("sidebar-collapsed") // In mobile, collapsed means shown
+      ) {
+        body.classList.remove("sidebar-collapsed"); // Hide sidebar
+        localStorage.setItem("sidebar-collapsed", "true");
+      }
+    }
   });
 });
 
