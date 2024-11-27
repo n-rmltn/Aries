@@ -22,3 +22,15 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   });
 });
+
+function showToast(title, message) {
+  const toastTitle = document.getElementById("toastTitle");
+  const toastMessage = document.getElementById("toastMessage");
+  const toast = document.getElementById("liveToast");
+
+  toastTitle.textContent = title;
+  toastMessage.textContent = message;
+
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+}

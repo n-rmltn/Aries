@@ -22,11 +22,22 @@
     </div>
 
     <partial name="Sections/Footer/_Footer" />
+    <partial name="Sections/Toast/_Toast" />
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (TempData["ToastMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showToast('@TempData["ToastTitle"]', '@TempData["ToastMessage"]');
+            });
+        </script>
+    }
+
 </body>
 
 </html>

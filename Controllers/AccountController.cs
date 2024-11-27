@@ -27,6 +27,8 @@ public class AccountController : Controller
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
             if (result.Succeeded)
             {
+                TempData["ToastTitle"] = "Success";
+                TempData["ToastMessage"] = "Logged in successfully!";
                 return RedirectToAction("Index", "Home");
             }
             ModelState.AddModelError("", "Invalid login attempt");
@@ -51,6 +53,8 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                TempData["ToastTitle"] = "Success"; 
+                TempData["ToastMessage"] = "Account created successfully!";
                 return RedirectToAction("Index", "Home");
             }
             foreach (var error in result.Errors)
@@ -59,5 +63,14 @@ public class AccountController : Controller
             }
         }
         return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        TempData["ToastTitle"] = "Success";
+        TempData["ToastMessage"] = "Logged out successfully!";
+        return RedirectToAction("Index", "Home");
     }
 }
