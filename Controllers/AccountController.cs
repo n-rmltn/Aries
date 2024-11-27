@@ -31,7 +31,8 @@ public class AccountController : Controller
                 TempData["ToastMessage"] = "Logged in successfully!";
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError("", "Invalid login attempt");
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "Invalid login attempt.";
         }
         return View(model);
     }
