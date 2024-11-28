@@ -27,6 +27,13 @@ public class DepartmentController : Controller
         return View(departments);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetDepartments()
+    {
+        var departments = await _departmentService.GetAllAsync();
+        return Json(new { data = departments });
+    }
+
     public IActionResult Create()
     {
         return View(new Department());

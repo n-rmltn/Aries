@@ -8,6 +8,7 @@ BEGIN
     GROUP BY d.Id, d.Name;
 END
 
+
 -- SP Get Employees
 DROP PROCEDURE IF EXISTS SP_Insert_Department;
 CREATE PROCEDURE SP_Insert_Department(IN p_Name VARCHAR(100))

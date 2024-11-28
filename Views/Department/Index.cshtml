@@ -2,8 +2,6 @@
     ViewData["Title"] = "Department";
 }
 
-@model IEnumerable<DepartmentViewModel>
-
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -32,8 +30,8 @@
             </a>
         </div>
     </h5>
-    <div class="table-responsive text-nowrap">
-        <table class="table table-hover">
+    <div class="table-responsive text-nowrap p-3">
+        <table id="departmentsTable" class="table table-hover">
             <thead>
                 <tr>
                     <th class="col-1">
@@ -44,39 +42,6 @@
                     <th class="col-1">Actions</th>
                 </tr>
             </thead>
-            <tbody class="table-border-bottom-0">
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="form-check-input department-checkbox" 
-                                   value="@item.Id" data-has-employees="@(item.EmployeeCount > 0)">
-                        </td>
-                        <td>
-                            <span>@item.Name</span>
-                        </td>
-                        <td>
-                            <span class="badge rounded-pill bg-label-info">@item.EmployeeCount</span>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
-                                        <i class="bi bi-pencil me-1"></i> Edit
-                                    </a>
-                                    <button class="dropdown-item text-danger"
-                                        onclick="showDeleteModal(@item.Id, '@item.Name')">
-                                        <i class="bi bi-trash me-1"></i> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
 </div>
@@ -105,7 +70,7 @@
 
 <form asp-action="BulkDelete" method="post" id="bulkDeleteForm">
     <input type="hidden" name="ids" id="selectedIds" />
-    
+
     <div class="modal fade" id="bulkDeleteModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -133,54 +98,126 @@
             new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectAll = document.getElementById('selectAll');
-            const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
-            const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        document.addEventListener('DOMContentLoaded', function () {
+            const table = $('#departmentsTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetDepartments")',
+                    type: 'GET'
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `<input type="checkbox" class="form-check-input department-checkbox" 
+                                                        value="${data.id}" 
+                                                        data-has-employees="${data.employeeCount > 0}"
+                                                        ${data.employeeCount > 0 ? 'disabled title="Cannot delete department with employees"' : ''}>`;
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'name',
+                        render: function (data) {
+                            return `<span>${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'employeeCount',
+                        render: function (data) {
+                            return `<span class="badge rounded-pill bg-label-info">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `
+                                                    <div class="dropdown">
+                                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                            <i class="bi bi-three-dots-vertical"></i>
+                                                        </button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="/Department/Edit/${data.id}">
+                                                                <i class="bi bi-pencil me-1"></i> Edit
+                                                            </a>
+                                                            <button class="dropdown-item text-danger"
+                                                                onclick="showDeleteModal(${data.id}, '${data.name}')">
+                                                                <i class="bi bi-trash me-1"></i> Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>`;
+                        },
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [[1, 'asc']],
+                language: {
+                    search: "Search departments:",
+                    lengthMenu: "Show _MENU_ departments per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ departments",
+                    infoEmpty: "No departments available",
+                    emptyTable: "No departments found"
+                },
+                drawCallback: function () {
+                    // Get fresh references after each draw
+                    const selectAll = document.getElementById('selectAll');
+                    const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
+                    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
 
-            function updateBulkDeleteButton() {
-                const checkedBoxes = document.querySelectorAll('.department-checkbox:checked');
-                bulkDeleteBtn.style.display = checkedBoxes.length > 0 ? 'inline-block' : 'none';
-            }
+                    departmentCheckboxes.forEach(checkbox => {
+                        if (checkbox.dataset.hasEmployees === "True") {
+                            checkbox.disabled = true;
+                            checkbox.title = "Cannot delete department with employees";
+                        }
+                    });
 
-            selectAll.addEventListener('change', function() {
+                    updateBulkDeleteButton();
+                }
+            });
+
+            // Use event delegation for select all
+            $(document).on('change', '#selectAll', function () {
+                const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
                 const canDeleteCheckboxes = Array.from(departmentCheckboxes).filter(checkbox => {
                     return !(checkbox.dataset.hasEmployees === "True" || checkbox.disabled);
                 });
 
                 canDeleteCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
+                    checkbox.checked = this.checked;
                 });
-                
-                selectAll.indeterminate = false;
+
+                this.indeterminate = false;
                 if (canDeleteCheckboxes.length > 0) {
                     const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
                     const someChecked = canDeleteCheckboxes.some(cb => cb.checked);
-                    selectAll.checked = allChecked;
-                    selectAll.indeterminate = someChecked && !allChecked;
+                    this.checked = allChecked;
+                    this.indeterminate = someChecked && !allChecked;
                 }
-
                 updateBulkDeleteButton();
             });
 
-            departmentCheckboxes.forEach(checkbox => {
-                if (checkbox.dataset.hasEmployees === "True") {
-                    checkbox.disabled = true;
-                    checkbox.title = "Cannot delete department with employees";
-                }
-                
-                checkbox.addEventListener('change', function() {
-                    const canDeleteCheckboxes = Array.from(departmentCheckboxes).filter(cb => !cb.disabled);
-                    const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
-                    const someChecked = canDeleteCheckboxes.some(cb => cb.checked);
-                    
-                    selectAll.checked = allChecked;
-                    selectAll.indeterminate = someChecked && !allChecked;
-                    updateBulkDeleteButton();
-                });
+            // Use event delegation for checkboxes
+            $(document).on('change', '.department-checkbox', function () {
+                const selectAll = document.getElementById('selectAll');
+                const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
+                const canDeleteCheckboxes = Array.from(departmentCheckboxes).filter(cb => !cb.disabled);
+                const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
+                const someChecked = canDeleteCheckboxes.some(cb => cb.checked);
+
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = someChecked && !allChecked;
+                updateBulkDeleteButton();
             });
 
-            bulkDeleteBtn.addEventListener('click', function() {
+            function updateBulkDeleteButton() {
+                const checkedBoxes = document.querySelectorAll('.department-checkbox:checked');
+                document.getElementById('bulkDeleteBtn').style.display =
+                    checkedBoxes.length > 0 ? 'inline-block' : 'none';
+            }
+
+            // Use event delegation for bulk delete
+            $(document).on('click', '#bulkDeleteBtn', function () {
                 const selectedIds = Array.from(document.querySelectorAll('.department-checkbox:checked'))
                     .map(cb => cb.value);
                 document.getElementById('selectedIds').value = selectedIds.join(',');
