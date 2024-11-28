@@ -35,7 +35,6 @@
             <thead>
                 <tr>
                     <th class="col-1">
-                        <input type="checkbox" class="form-check-input" id="selectAll">
                     </th>
                     <th class="col-5">Department</th>
                     <th class="col-4">Employee Count</th>
@@ -104,17 +103,21 @@
                     url: '@Url.Action("GetDepartments")',
                     type: 'GET'
                 },
+                select: {
+                    style: 'multi',
+                    selector: 'td.select-checkbox'
+                },
+                columnDefs: [{
+                    targets: 0,
+                    orderable: false,
+                    className: 'select-checkbox',
+                    render: DataTable.render.select(),
+                }],
                 columns: [
                     {
                         data: null,
-                        render: function (data) {
-                            return `<input type="checkbox" class="form-check-input department-checkbox" 
-                                                            value="${data.id}" 
-                                                            data-has-employees="${data.employeeCount > 0}"
-                                                            ${data.employeeCount > 0 ? 'disabled title="Cannot delete department with employees"' : ''}>`;
-                        },
-                        orderable: false,
-                        searchable: false
+                        defaultContent: '',
+                        orderable: false
                     },
                     {
                         data: 'name',
@@ -132,20 +135,20 @@
                         data: null,
                         render: function (data) {
                             return `
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="/Department/Edit/${data.id}">
+                                            <i class="bi bi-pencil me-1"></i> Edit
+                                        </a>
+                                        <button class="dropdown-item text-danger"
+                                            onclick="showDeleteModal(${data.id}, '${data.name}')">
+                                            <i class="bi bi-trash me-1"></i> Delete
                                         </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/Department/Edit/${data.id}">
-                                                <i class="bi bi-pencil me-1"></i> Edit
-                                            </a>
-                                            <button class="dropdown-item text-danger"
-                                                onclick="showDeleteModal(${data.id}, '${data.name}')">
-                                                <i class="bi bi-trash me-1"></i> Delete
-                                            </button>
-                                        </div>
-                                    </div>`;
+                                    </div>
+                                </div>`;
                         },
                         orderable: false,
                         searchable: false
@@ -157,69 +160,26 @@
                     lengthMenu: "Show _MENU_ departments per page",
                     info: "Showing _START_ to _END_ of _TOTAL_ departments",
                     infoEmpty: "No departments available",
-                    emptyTable: "No departments found"
-                },
-                drawCallback: function () {
-                    // Get fresh references after each draw
-                    const selectAll = document.getElementById('selectAll');
-                    const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
-                    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
-
-                    departmentCheckboxes.forEach(checkbox => {
-                        if (checkbox.dataset.hasEmployees === "True") {
-                            checkbox.disabled = true;
-                            checkbox.title = "Cannot delete department with employees";
+                    emptyTable: "No departments found",
+                    select: {
+                        rows: {
+                            _: "%d rows selected",
+                            0: "",
+                            1: "1 row selected"
                         }
-                    });
-
-                    updateBulkDeleteButton();
+                    }
                 }
             });
-
-            // Use event delegation for select all
-            $(document).on('change', '#selectAll', function () {
-                const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
-                const canDeleteCheckboxes = Array.from(departmentCheckboxes).filter(checkbox => {
-                    return !(checkbox.dataset.hasEmployees === "True" || checkbox.disabled);
-                });
-
-                canDeleteCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                });
-
-                this.indeterminate = false;
-                if (canDeleteCheckboxes.length > 0) {
-                    const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
-                    const someChecked = canDeleteCheckboxes.some(cb => cb.checked);
-                    this.checked = allChecked;
-                    this.indeterminate = someChecked && !allChecked;
-                }
-                updateBulkDeleteButton();
-            });
-
-            // Use event delegation for checkboxes
-            $(document).on('change', '.department-checkbox', function () {
-                const selectAll = document.getElementById('selectAll');
-                const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
-                const canDeleteCheckboxes = Array.from(departmentCheckboxes).filter(cb => !cb.disabled);
-                const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
-                const someChecked = canDeleteCheckboxes.some(cb => cb.checked);
-
-                selectAll.checked = allChecked;
-                selectAll.indeterminate = someChecked && !allChecked;
-                updateBulkDeleteButton();
-            });
-
-            function updateBulkDeleteButton() {
-                const checkedBoxes = document.querySelectorAll('.department-checkbox:checked');
-                document.getElementById('bulkDeleteBtn').style.display =
-                    checkedBoxes.length > 0 ? 'inline-block' : 'none';
-            }
 
             // Use event delegation for bulk delete
+            table.on('select deselect', function () {
+                const count = table.rows({ selected: true }).count();
+                document.getElementById('bulkDeleteBtn').style.display = count > 0 ? 'inline-block' : 'none';
+            });
+
             $(document).on('click', '#bulkDeleteBtn', function () {
-                const selectedIds = Array.from(document.querySelectorAll('.department-checkbox:checked'))
-                    .map(cb => cb.value);
+                const selectedRows = table.rows({ selected: true }).data();
+                const selectedIds = Array.from(selectedRows).map(row => row.id);
                 document.getElementById('selectedIds').value = selectedIds.join(',');
                 document.getElementById('selectedCount').textContent = selectedIds.length;
                 new bootstrap.Modal(document.getElementById('bulkDeleteModal')).show();
