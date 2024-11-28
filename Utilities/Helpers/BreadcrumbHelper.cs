@@ -9,8 +9,8 @@ public static class BreadcrumbHelper
     public static List<BreadcrumbItem> BuildBreadcrumb(this IUrlHelper urlHelper, ViewContext context)
     {
         var breadcrumbs = new List<BreadcrumbItem>();
-        var controller = context.RouteData.Values["controller"].ToString();
-        var action = context.RouteData.Values["action"].ToString();
+        var controller = context.RouteData.Values["controller"]?.ToString();
+        var action = context.RouteData.Values["action"]?.ToString();
 
         breadcrumbs.Add(new BreadcrumbItem
         {

@@ -108,7 +108,7 @@ public class DepartmentController : Controller
         if (await _departmentService.BulkDeleteAsync(idList))
         {
             TempData["ToastTitle"] = "Success";
-            TempData["ToastMessage"] = $"Successfully deleted {idList.Count} deparments";
+            TempData["ToastMessage"] = $"Successfully deleted {idList.Count} departments";
         }
         else
         {

@@ -19,7 +19,7 @@ public class DepartmentRepository : IDepartmentRepository
     public async Task<IEnumerable<DepartmentViewModel>> GetDepartmentsAsync()
     {
         var results = await _context.Database
-        .SqlQuery<DepartmentSpResult>($"CALL SP_Get_Departments")
+        .SqlQuery<DepartmentViewModel>($"CALL SP_Get_Departments")
         .ToListAsync();
 
         return results.Select(r => new DepartmentViewModel
