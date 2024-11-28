@@ -35,7 +35,14 @@ public class EmployeeController : Controller
             Value = d.Id.ToString(),
             Text = d.Name
         });
-        return View(employees);
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetEmployees()
+    {
+        var employees = await _employeeService.GetAllAsync();
+        return Json(new { data = employees });
     }
 
     public async Task<IActionResult> Create()

@@ -2,8 +2,6 @@
     ViewData["Title"] = "Employee";
 }
 
-@model IEnumerable<EmployeeViewModel>
-
 <div class="card">
     <h5 class="card-header d-flex justify-content-between align-items-center">
         Employees List
@@ -19,8 +17,8 @@
             </a>
         </div>
     </h5>
-    <div class="table-responsive text-nowrap">
-        <table class="table table-hover">
+    <div class="table-responsive text-nowrap p-3">
+        <table id="employeesTable" class="table table-hover">
             <thead>
                 <tr>
                     <th class="col-1">
@@ -31,36 +29,6 @@
                     <th class="col-1">Actions</th>
                 </tr>
             </thead>
-            <tbody class="table-border-bottom-0">
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="form-check-input employee-checkbox" value="@item.Id">
-                        </td>
-                        <td><span>@item.Name</span></td>
-                        <td>
-                            <span class="badge rounded-pill bg-label-primary">@item.DepartmentName</span>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
-                                        <i class="bi bi-pencil me-1"></i> Edit
-                                    </a>
-                                    <button class="dropdown-item text-danger"
-                                        onclick="showDeleteModal(@item.Id, '@item.Name')">
-                                        <i class="bi bi-trash me-1"></i> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
         </table>
     </div>
 </div>
@@ -152,46 +120,105 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const selectAll = document.getElementById('selectAll');
-            const employeeCheckboxes = document.querySelectorAll('.employee-checkbox');
-            const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
-            const bulkEditBtn = document.getElementById('bulkEditBtn');
+            const table = $('#employeesTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetEmployees")',
+                    type: 'GET'
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `<input type="checkbox" class="form-check-input employee-checkbox" value="${data.id}">`;
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'name',
+                        render: function (data) {
+                            return `<span>${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'departmentName',
+                        render: function (data) {
+                            return `<span class="badge rounded-pill bg-label-primary">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data) {
+                            return `
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-three-dots-vertical"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="/Employee/Edit/${data.id}">
+                                                        <i class="bi bi-pencil me-1"></i> Edit
+                                                    </a>
+                                                    <button class="dropdown-item text-danger"
+                                                        onclick="showDeleteModal(${data.id}, '${data.name}')">
+                                                        <i class="bi bi-trash me-1"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </div>`;
+                        },
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [[1, 'asc']],
+                language: {
+                    search: "Search employees:",
+                    lengthMenu: "Show _MENU_ employees per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ employees",
+                    infoEmpty: "No employees available",
+                    emptyTable: "No employees found"
+                },
+                drawCallback: function () {
+                    updateBulkButtons();
+                }
+            });
 
+            // Update bulk buttons state
             function updateBulkButtons() {
                 const checkedBoxes = document.querySelectorAll('.employee-checkbox:checked');
                 const hasSelection = checkedBoxes.length > 0;
-                bulkDeleteBtn.style.display = hasSelection ? 'inline-block' : 'none';
-                bulkEditBtn.style.display = hasSelection ? 'inline-block' : 'none';
+                document.getElementById('bulkDeleteBtn').style.display = hasSelection ? 'inline-block' : 'none';
+                document.getElementById('bulkEditBtn').style.display = hasSelection ? 'inline-block' : 'none';
             }
 
-            selectAll.addEventListener('change', function () {
-                employeeCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
-                });
+            // Select all handling
+            $(document).on('change', '#selectAll', function () {
+                const checkboxes = document.querySelectorAll('.employee-checkbox');
+                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
                 updateBulkButtons();
             });
 
-            employeeCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    const allChecked = Array.from(employeeCheckboxes).every(cb => cb.checked);
-                    const someChecked = Array.from(employeeCheckboxes).some(cb => cb.checked);
-
-                    selectAll.checked = allChecked;
-                    selectAll.indeterminate = someChecked && !allChecked;
-                    updateBulkButtons();
-                });
+            // Individual checkbox handling
+            $(document).on('change', '.employee-checkbox', function () {
+                const selectAll = document.getElementById('selectAll');
+                const checkboxes = document.querySelectorAll('.employee-checkbox');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = someChecked && !allChecked;
+                updateBulkButtons();
             });
 
-            bulkDeleteBtn.addEventListener('click', function () {
+            // Bulk delete button handling
+            $('#bulkDeleteBtn').on('click', function () {
                 const selectedIds = Array.from(document.querySelectorAll('.employee-checkbox:checked'))
                     .map(cb => cb.value);
-
                 document.getElementById('selectedIds').value = selectedIds.join(',');
                 document.getElementById('selectedCount').textContent = selectedIds.length;
                 new bootstrap.Modal(document.getElementById('bulkDeleteModal')).show();
             });
 
-            bulkEditBtn.addEventListener('click', function () {
+            // Bulk edit button handling
+            $('#bulkEditBtn').on('click', function () {
                 const selectedIds = Array.from(document.querySelectorAll('.employee-checkbox:checked'))
                     .map(cb => cb.value);
                 document.getElementById('selectedEditIds').value = selectedIds.join(',');

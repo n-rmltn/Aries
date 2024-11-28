@@ -23,8 +23,7 @@ public class DepartmentController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var departments = await _departmentService.GetAllAsync();
-        return View(departments);
+        return View();
     }
 
     [HttpGet]
