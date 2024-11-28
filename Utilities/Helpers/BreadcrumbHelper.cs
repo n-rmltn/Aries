@@ -12,7 +12,6 @@ public static class BreadcrumbHelper
         var controller = context.RouteData.Values["controller"].ToString();
         var action = context.RouteData.Values["action"].ToString();
 
-        // Add Home
         breadcrumbs.Add(new BreadcrumbItem
         {
             Text = "Home",
@@ -20,7 +19,6 @@ public static class BreadcrumbHelper
             IsActive = false
         });
 
-        // Add Controller
         if (controller != "Home")
         {
             breadcrumbs.Add(new BreadcrumbItem
@@ -31,7 +29,6 @@ public static class BreadcrumbHelper
             });
         }
 
-        // Add Action
         if (action != "Index")
         {
             breadcrumbs.Add(new BreadcrumbItem

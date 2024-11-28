@@ -43,7 +43,6 @@ public class DepartmentRepository : IDepartmentRepository
         var result = await _context.Database
             .ExecuteSqlRawAsync("CALL SP_Insert_Department(@p_Name)", nameParam);
         
-        // Get the newly created department's ID
         var newId = await _context.Departments
             .OrderByDescending(d => d.Id)
             .Select(d => d.Id)

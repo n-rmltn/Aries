@@ -116,6 +116,12 @@ body.sidebar-collapsed {
   border-radius: 0.25rem;
 }
 
+.breadcrumb-item a,
+.breadcrumb-item.active {
+  text-decoration: none;
+  color: #555;
+}
+
 .breadcrumb-item + .breadcrumb-item::before {
   content: ">";
 }

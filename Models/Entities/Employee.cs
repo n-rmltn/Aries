@@ -5,9 +5,9 @@ public class Employee
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     
-    // Foreign key
+    // FK
     public int DepartmentId { get; set; }
     
-    // Navigation property
+    // Nav
     public virtual Department Department { get; set; } = null!;
 }
