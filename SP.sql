@@ -33,6 +33,17 @@ BEGIN
     WHERE Id = p_Id;
 END
 
+-- SP Bulk Remove Department
+DROP PROCEDURE IF EXISTS SP_Bulk_Remove_Department;
+CREATE PROCEDURE SP_Bulk_Remove_Department(IN p_Ids VARCHAR(1000))
+BEGIN
+    -- Delete departments that have no employees
+    DELETE d FROM Departments d
+    LEFT JOIN Employees e ON d.Id = e.DepartmentId
+    WHERE FIND_IN_SET(d.Id, p_Ids) > 0
+    AND e.Id IS NULL;
+END
+
 -- SP Get Employees
 DROP PROCEDURE IF EXISTS SP_Get_Employees;
 CREATE PROCEDURE SP_Get_Employees()

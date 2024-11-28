@@ -11,4 +11,5 @@ public interface IDepartmentService
     Task<bool> DeleteAsync(int id);
     Task<bool> ExistsAsync(int id);
     Task<bool> HasEmployeesAsync(int id);
+    Task<bool> BulkDeleteAsync(IEnumerable<int> ids);
 }

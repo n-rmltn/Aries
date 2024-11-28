@@ -11,4 +11,5 @@ public interface IDepartmentRepository
     Task CreateAsync(Department department);
     Task UpdateAsync(Department department);
     Task DeleteAsync(int id);
+    Task BulkDeleteAsync(IEnumerable<int> ids);
 }

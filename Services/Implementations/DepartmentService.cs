@@ -97,6 +97,34 @@ public class DepartmentService : IDepartmentService
         }
     }
 
+    public async Task<bool> BulkDeleteAsync(IEnumerable<int> ids)
+    {
+        try
+        {
+            var validIds = new List<int>();
+            foreach (var id in ids)
+            {
+                if (!await HasEmployeesAsync(id))
+                {
+                    validIds.Add(id);
+                }
+            }
+
+            if (validIds.Any())
+            {
+                await _repository.BulkDeleteAsync(validIds);
+                return true;
+            }
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk deleting departments");
+            return false;
+        }
+    }
+
     public async Task<bool> ExistsAsync(int id)
     {
         var department = await GetByIdAsync(id);

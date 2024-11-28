@@ -86,4 +86,30 @@ public class DepartmentController : Controller
         }
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> BulkDelete(string ids)
+    {
+        if (string.IsNullOrEmpty(ids))
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "No departments selected";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var idList = ids.Split(',').Select(int.Parse).ToList();
+        
+        if (await _departmentService.BulkDeleteAsync(idList))
+        {
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = $"Successfully deleted {idList.Count} deparments";
+        }
+        else
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "Cannot delete departments with employees";
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }

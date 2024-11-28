@@ -69,4 +69,12 @@ public class DepartmentRepository : IDepartmentRepository
         await _context.Database
             .ExecuteSqlRawAsync("CALL SP_Remove_Department(@p_Id)", parameter);
     }
+
+    public async Task BulkDeleteAsync(IEnumerable<int> ids)
+    {
+        var idsString = string.Join(",", ids);
+        var parameter = new MySqlParameter("@p_Ids", idsString);
+        await _context.Database
+            .ExecuteSqlRawAsync("CALL SP_Bulk_Remove_Department(@p_Ids)", parameter);
+    }
 }

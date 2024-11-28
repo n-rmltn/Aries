@@ -103,6 +103,28 @@
     </div>
 </div>
 
+<form asp-action="BulkDelete" method="post" id="bulkDeleteForm">
+    <input type="hidden" name="ids" id="selectedIds" />
+    
+    <div class="modal fade" id="bulkDeleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Bulk Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <span id="selectedCount"></span> departments?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
     <script>
         function showDeleteModal(id, name) {
@@ -130,7 +152,6 @@
                     checkbox.checked = selectAll.checked;
                 });
                 
-                // Update select all checkbox state based on all selectable checkboxes
                 selectAll.indeterminate = false;
                 if (canDeleteCheckboxes.length > 0) {
                     const allChecked = canDeleteCheckboxes.every(cb => cb.checked);
@@ -159,31 +180,12 @@
                 });
             });
 
-            bulkDeleteBtn.addEventListener('click', async function() {
+            bulkDeleteBtn.addEventListener('click', function() {
                 const selectedIds = Array.from(document.querySelectorAll('.department-checkbox:checked'))
                     .map(cb => cb.value);
-                
-                if (confirm(`Are you sure you want to delete ${selectedIds.length} departments?`)) {
-                    try {
-                        const response = await fetch('/Department/BulkDelete', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]').value
-                            },
-                            body: JSON.stringify(selectedIds)
-                        });
-
-                        if (response.ok) {
-                            window.location.reload();
-                        } else {
-                            alert('Failed to delete departments');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Failed to delete departments');
-                    }
-                }
+                document.getElementById('selectedIds').value = selectedIds.join(',');
+                document.getElementById('selectedCount').textContent = selectedIds.length;
+                new bootstrap.Modal(document.getElementById('bulkDeleteModal')).show();
             });
         });
     </script>

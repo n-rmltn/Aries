@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Bulk edit
-- [ ] Bulk delete
-- [ ] Confirmation modal
+- [x] Bulk edit
+- [x] Bulk delete
+- [x] Confirmation modal
 - [ ] Pagination
