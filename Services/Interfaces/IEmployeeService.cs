@@ -7,4 +7,7 @@ public interface IEmployeeService
     Task<bool> CreateAsync(EmployeeFormViewModel model);
     Task<bool> UpdateAsync(EmployeeFormViewModel model);
     Task<bool> DeleteAsync(int id);
+    Task<bool> BulkDeleteAsync(IEnumerable<int> ids);
+    Task<bool> BulkEditAsync(IEnumerable<int> ids, int departmentId);
+
 }

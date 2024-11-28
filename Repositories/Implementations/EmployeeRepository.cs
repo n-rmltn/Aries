@@ -60,4 +60,24 @@ public class EmployeeRepository : IEmployeeRepository
         await _context.Database
             .ExecuteSqlRawAsync("CALL SP_Remove_Employee(@p_Id)", parameter);
     }
+
+    public async Task BulkDeleteAsync(IEnumerable<int> ids)
+    {
+        var idsString = string.Join(",", ids);
+        var parameter = new MySqlParameter("@p_Ids", idsString);
+        await _context.Database
+            .ExecuteSqlRawAsync("CALL SP_Bulk_Remove_Employee(@p_Ids)", parameter);
+    }
+
+    public async Task BulkEditAsync(IEnumerable<int> ids, int departmentId)
+{
+    var idsString = string.Join(",", ids);
+    var parameters = new[]
+    {
+        new MySqlParameter("@p_Ids", idsString),
+        new MySqlParameter("@p_DepartmentId", departmentId)
+    };
+    await _context.Database
+        .ExecuteSqlRawAsync("CALL SP_Bulk_Edit_Employee(@p_Ids, @p_DepartmentId)", parameters);
+}
 }

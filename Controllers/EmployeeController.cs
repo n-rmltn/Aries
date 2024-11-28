@@ -29,6 +29,12 @@ public class EmployeeController : Controller
     public async Task<IActionResult> Index()
     {
         var employees = await _employeeService.GetAllAsync();
+        var departments = await _departmentService.GetAllAsync();
+        ViewBag.Departments = departments.Select(d => new SelectListItem
+        {
+            Value = d.Id.ToString(),
+            Text = d.Name
+        });
         return View(employees);
     }
 
@@ -116,6 +122,58 @@ public class EmployeeController : Controller
             TempData["ToastTitle"] = "Error";
             TempData["ToastMessage"] = "Failed to delete employee";
         }
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> BulkDelete(string ids)
+    {
+        if (string.IsNullOrEmpty(ids))
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "No employees selected";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var idList = ids.Split(',').Select(int.Parse).ToList();
+        
+        if (await _employeeService.BulkDeleteAsync(idList))
+        {
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = $"Successfully deleted {idList.Count} employees";
+        }
+        else
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "Failed to delete employees";
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> BulkEdit(string ids, int departmentId)
+    {
+        if (string.IsNullOrEmpty(ids))
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "No employees selected";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var idList = ids.Split(',').Select(int.Parse).ToList();
+        
+        if (await _employeeService.BulkEditAsync(idList, departmentId))
+        {
+            TempData["ToastTitle"] = "Success";
+            TempData["ToastMessage"] = $"Successfully updated {idList.Count} employees";
+        }
+        else
+        {
+            TempData["ToastTitle"] = "Error";
+            TempData["ToastMessage"] = "Failed to update employees";
+        }
+
         return RedirectToAction(nameof(Index));
     }
 }

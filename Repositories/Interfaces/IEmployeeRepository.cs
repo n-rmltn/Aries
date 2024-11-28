@@ -9,4 +9,6 @@ public interface IEmployeeRepository
     Task CreateAsync(Employee employee);
     Task UpdateAsync(Employee employee);
     Task DeleteAsync(int id);
+    Task BulkDeleteAsync(IEnumerable<int> ids);
+    Task BulkEditAsync(IEnumerable<int> ids, int departmentId);
 }

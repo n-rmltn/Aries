@@ -116,4 +116,32 @@ public class EmployeeService : IEmployeeService
             return false;
         }
     }
+
+    public async Task<bool> BulkDeleteAsync(IEnumerable<int> ids)
+    {
+        try
+        {
+            await _repository.BulkDeleteAsync(ids);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk deleting employees");
+            return false;
+        }
+    }
+
+    public async Task<bool> BulkEditAsync(IEnumerable<int> ids, int departmentId)
+    {
+        try
+        {
+            await _repository.BulkEditAsync(ids, departmentId);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error bulk editing employees");
+            return false;
+        }
+    }
 }
