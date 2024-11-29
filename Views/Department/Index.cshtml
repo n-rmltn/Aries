@@ -105,6 +105,9 @@
                             {
                                 text: '<i class="bi bi-plus-lg"></i> Add New Department',
                                 className: 'btn btn-primary',
+                                action: function () {
+                                    window.location.href = '@Url.Action("Create")';
+                                }
                             },
                             'spacer',
                             {
@@ -123,7 +126,11 @@
                                 }
                             }
                         ]
-                    }
+                    },
+                    bottomStart: {
+                        buttons: ['pageLength'],
+                    },
+                    bottom2Start: 'info'
                 },
                 columnDefs: [{
                     targets: 0,
@@ -175,10 +182,8 @@
                 order: [[1, 'asc']],
                 language: {
                     search: "Search departments:",
-                    lengthMenu: "Show _MENU_ departments per page",
                     info: "Showing _START_ to _END_ of _TOTAL_ departments",
                     infoEmpty: "No departments available",
-                    emptyTable: "No departments found",
                     select: {
                         rows: {
                             _: "%d rows selected",
