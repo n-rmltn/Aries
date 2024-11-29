@@ -44,8 +44,8 @@ public static class BreadcrumbHelper
 
     public static string GetCurrentPageTitle(this ViewContext context)
     {
-        var controller = context.RouteData.Values["controller"].ToString();
-        var action = context.RouteData.Values["action"].ToString();
+        var controller = context.RouteData.Values["controller"]?.ToString() ?? "Home";
+        var action = context.RouteData.Values["action"]?.ToString() ?? "Index";
         
         return action == "Index" ? controller : $"{controller} - {action}";
     }
