@@ -190,10 +190,13 @@ public class EmployeeController : Controller
         [FromQuery] int start,
         [FromQuery] int length,
         [FromQuery(Name = "search[value]")] string searchValue = "",
-        [FromQuery(Name = "search[regex]")] bool searchRegex = false)
+        [FromQuery(Name = "search[regex]")] bool searchRegex = false,
+        [FromQuery(Name = "order[0][dir]")] string orderDir = "asc",
+        [FromQuery(Name = "order[0][column]")] string orderName = "name")
     {
         try
         {
+            _logger.LogInformation($"Search: {searchValue}, Order Direction: {orderDir}, Order Name: {orderName}");
             var request = new DataTablesRequest
             {
                 Draw = draw,
@@ -203,6 +206,11 @@ public class EmployeeController : Controller
                 { 
                     Value = searchValue,
                     Regex = searchRegex 
+                },
+                Order = new Order
+                {
+                    Dir = orderDir,
+                    Name = orderName
                 }
             };
             

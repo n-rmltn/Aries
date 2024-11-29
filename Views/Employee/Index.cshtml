@@ -120,7 +120,13 @@
                             search: {
                                 value: d.search.value,
                                 regex: d.search.regex
-                            }
+                            },
+                            order: d.order.map(function (order) {
+                                return {
+                                    column: d.columns[order.column].data,
+                                    dir: order.dir
+                                };
+                            })
                         };
                     }
                 },
@@ -202,20 +208,20 @@
                         data: null,
                         render: function (data) {
                             return `
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
+                                <div class="dropdown">
+                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="/Employee/Edit/${data.id}">
+                                            <i class="bi bi-pencil me-1"></i> Edit
+                                        </a>
+                                        <button class="dropdown-item text-danger"
+                                            onclick="showDeleteModal(${data.id}, '${data.name}')">
+                                            <i class="bi bi-trash me-1"></i> Delete
                                         </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/Employee/Edit/${data.id}">
-                                                <i class="bi bi-pencil me-1"></i> Edit
-                                            </a>
-                                            <button class="dropdown-item text-danger"
-                                                onclick="showDeleteModal(${data.id}, '${data.name}')">
-                                                <i class="bi bi-trash me-1"></i> Delete
-                                            </button>
-                                        </div>
-                                    </div>`;
+                                    </div>
+                                </div>`;
                         },
                         orderable: false,
                         searchable: false

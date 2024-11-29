@@ -12,5 +12,5 @@ public interface IEmployeeRepository
     Task BulkDeleteAsync(IEnumerable<int> ids);
     Task BulkEditAsync(IEnumerable<int> ids, int departmentId);
     Task<(IEnumerable<Employee> Data, int TotalRecords, int FilteredRecords)> 
-    GetPagedAsync(int start, int length, string searchTerm);
+    GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir);
 }

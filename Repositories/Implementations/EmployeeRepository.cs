@@ -82,7 +82,7 @@ public class EmployeeRepository : IEmployeeRepository
 
     // Lawd forgive the spaghetti
     public async Task<(IEnumerable<Employee> Data, int TotalRecords, int FilteredRecords)> 
-    GetPagedAsync(int start, int length, string searchTerm)
+    GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -94,6 +94,8 @@ public class EmployeeRepository : IEmployeeRepository
         command.Parameters.Add(new MySqlParameter("p_Start", start));
         command.Parameters.Add(new MySqlParameter("p_Length", length));
         command.Parameters.Add(new MySqlParameter("p_Search", searchTerm ?? string.Empty));
+        command.Parameters.Add(new MySqlParameter("p_OrderColumn", orderName));
+        command.Parameters.Add(new MySqlParameter("p_OrderDir", orderDir));
         
         var result = new List<Employee>();
         int totalRecords = 0;

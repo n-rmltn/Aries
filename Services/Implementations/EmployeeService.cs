@@ -151,7 +151,9 @@ public class EmployeeService : IEmployeeService
         var (data, totalRecords, filteredRecords) = await _repository.GetPagedAsync(
             request.Start,
             request.Length,
-            searchTerm ?? string.Empty
+            searchTerm ?? string.Empty,
+            request.Order.Name,
+            request.Order.Dir
         );
 
         return new DataTablesResponse<EmployeeViewModel>
@@ -167,4 +169,5 @@ public class EmployeeService : IEmployeeService
             })
         };
     }
+
 }
