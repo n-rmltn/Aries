@@ -109,7 +109,6 @@
                                     window.location.href = '@Url.Action("Create")';
                                 }
                             },
-                            'spacer',
                             {
                                 text: '<i class="bi bi-trash"></i> Delete Selected',
                                 className: 'btn btn-danger',
@@ -140,15 +139,10 @@
                 }],
                 columns: [
                     {
-                        data: null,
-                        defaultContent: '',
-                        orderable: false
+                        data: null
                     },
                     {
-                        data: 'name',
-                        render: function (data) {
-                            return `<span>${data}</span>`;
-                        }
+                        data: 'name'
                     },
                     {
                         data: 'employeeCount',
@@ -196,7 +190,7 @@
 
             table.on('select deselect', function () {
                 var selectedRows = table.rows({ selected: true }).count();
-                table.button(2).enable(selectedRows > 0);
+                table.button(1).enable(selectedRows > 0);
             });
 
         });
