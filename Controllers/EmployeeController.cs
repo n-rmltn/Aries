@@ -185,10 +185,27 @@ public class EmployeeController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetEmployees([FromQuery] DataTablesRequest request)
+    public async Task<IActionResult> GetEmployees(
+        [FromQuery] int draw,
+        [FromQuery] int start,
+        [FromQuery] int length,
+        [FromQuery(Name = "search[value]")] string searchValue = "",
+        [FromQuery(Name = "search[regex]")] bool searchRegex = false)
     {
         try
         {
+            var request = new DataTablesRequest
+            {
+                Draw = draw,
+                Start = start,
+                Length = length,
+                Search = new Search 
+                { 
+                    Value = searchValue,
+                    Regex = searchRegex 
+                }
+            };
+            
             var response = await _employeeService.GetPagedAsync(request);
             return Json(response);
         }

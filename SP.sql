@@ -130,3 +130,43 @@ BEGIN
     ORDER BY e.Name ASC
     LIMIT p_Start, p_Length;
 END;
+
+DROP PROCEDURE IF EXISTS SP_Get_Employees_Paged;
+CREATE PROCEDURE SP_Get_Employees_Paged(
+    IN p_Start INT,
+    IN p_Length INT,
+    IN p_Search VARCHAR(100)
+)
+BEGIN
+    DECLARE total_records INT;
+    DECLARE filtered_records INT;
+    
+    -- Total
+    SELECT COUNT(*) INTO total_records
+    FROM Employees;
+    
+    -- filtered count based on search
+    SELECT COUNT(*) INTO filtered_records
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentId = d.Id
+    WHERE p_Search = '' OR 
+          e.Name LIKE CONCAT('%', p_Search, '%') OR
+          d.Name LIKE CONCAT('%', p_Search, '%');
+    
+    SELECT 
+        e.Id,
+        e.Name,
+        e.DepartmentId,
+        d.Name as DepartmentName,
+        total_records as TotalRecords,
+        filtered_records as FilteredRecords
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentId = d.Id
+    WHERE p_Search = '' OR 
+          e.Name LIKE CONCAT('%', p_Search, '%') OR 
+          d.Name LIKE CONCAT('%', p_Search, '%')
+    ORDER BY e.Name ASC
+    LIMIT p_Start, p_Length;
+END;
+
+CALL SP_Get_Employees_Paged(0, 25, '');

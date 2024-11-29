@@ -147,15 +147,18 @@ public class EmployeeService : IEmployeeService
 
     public async Task<DataTablesResponse<EmployeeViewModel>> GetPagedAsync(DataTablesRequest request)
     {
-        var (data, totalRecords) = await _repository.GetPagedAsync(
+        var searchTerm = request.Search?.Value;
+        var (data, totalRecords, filteredRecords) = await _repository.GetPagedAsync(
             request.Start,
-            request.Length);
+            request.Length,
+            searchTerm ?? string.Empty
+        );
 
         return new DataTablesResponse<EmployeeViewModel>
         {
             Draw = request.Draw,
             RecordsTotal = totalRecords,
-            RecordsFiltered = totalRecords,
+            RecordsFiltered = filteredRecords,
             Data = data.Select(e => new EmployeeViewModel
             {
                 Id = e.Id,

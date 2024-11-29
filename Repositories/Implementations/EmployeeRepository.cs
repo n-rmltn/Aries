@@ -81,7 +81,8 @@ public class EmployeeRepository : IEmployeeRepository
     }
 
     // Lawd forgive the spaghetti
-    public async Task<(IEnumerable<Employee> Data, int TotalRecords)> GetPagedAsync(int start, int length)
+    public async Task<(IEnumerable<Employee> Data, int TotalRecords, int FilteredRecords)> 
+    GetPagedAsync(int start, int length, string searchTerm)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -92,10 +93,12 @@ public class EmployeeRepository : IEmployeeRepository
         
         command.Parameters.Add(new MySqlParameter("p_Start", start));
         command.Parameters.Add(new MySqlParameter("p_Length", length));
-
+        command.Parameters.Add(new MySqlParameter("p_Search", searchTerm ?? string.Empty));
+        
         var result = new List<Employee>();
         int totalRecords = 0;
-
+        int filteredRecords = 0;
+        
         using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
@@ -110,13 +113,12 @@ public class EmployeeRepository : IEmployeeRepository
                     Name = reader.GetString("DepartmentName")
                 }
             });
-
             if (result.Count == 1)
             {
                 totalRecords = reader.GetInt32("TotalRecords");
+                filteredRecords = reader.GetInt32("FilteredRecords");
             }
         }
-
-        return (result, totalRecords);
+        return (result, totalRecords, filteredRecords);
     }
 }
