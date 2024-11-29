@@ -21,14 +21,6 @@
 <div class="card">
     <h5 class="card-header d-flex justify-content-between align-items-center">
         Departments List
-        <div>
-            <button id="bulkDeleteBtn" class="btn btn-danger me-2" style="display:none">
-                <i class="bi bi-trash"></i> Delete Selected
-            </button>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Add New Department
-            </a>
-        </div>
     </h5>
     <div class="table-responsive text-nowrap p-3">
         <table id="departmentsTable" class="table table-hover">
@@ -107,6 +99,32 @@
                     style: 'multi',
                     selector: 'td.select-checkbox'
                 },
+                layout: {
+                    topStart: {
+                        buttons: [
+                            {
+                                text: '<i class="bi bi-plus-lg"></i> Add New Department',
+                                className: 'btn btn-primary',
+                            },
+                            'spacer',
+                            {
+                                text: '<i class="bi bi-trash"></i> Delete Selected',
+                                className: 'btn btn-danger',
+                                attr: {
+                                    id: 'bulkDeleteBtn'
+                                },
+                                enabled: false,
+                                action: function () {
+                                    const selectedRows = table.rows({ selected: true }).data();
+                                    const selectedIds = Array.from(selectedRows).map(row => row.id);
+                                    document.getElementById('selectedIds').value = selectedIds.join(',');
+                                    document.getElementById('selectedCount').textContent = selectedIds.length;
+                                    new bootstrap.Modal(document.getElementById('bulkDeleteModal')).show();
+                                }
+                            }
+                        ]
+                    }
+                },
                 columnDefs: [{
                     targets: 0,
                     orderable: false,
@@ -171,19 +189,11 @@
                 }
             });
 
-            // Use event delegation for bulk delete
             table.on('select deselect', function () {
-                const count = table.rows({ selected: true }).count();
-                document.getElementById('bulkDeleteBtn').style.display = count > 0 ? 'inline-block' : 'none';
+                var selectedRows = table.rows({ selected: true }).count();
+                table.button(2).enable(selectedRows > 0);
             });
 
-            $(document).on('click', '#bulkDeleteBtn', function () {
-                const selectedRows = table.rows({ selected: true }).data();
-                const selectedIds = Array.from(selectedRows).map(row => row.id);
-                document.getElementById('selectedIds').value = selectedIds.join(',');
-                document.getElementById('selectedCount').textContent = selectedIds.length;
-                new bootstrap.Modal(document.getElementById('bulkDeleteModal')).show();
-            });
         });
     </script>
 }
