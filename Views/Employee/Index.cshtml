@@ -111,8 +111,17 @@
             const table = $('#employeesTable').DataTable({
                 ajax: {
                     url: '@Url.Action("GetEmployees")',
-                    type: 'GET'
+                    type: 'GET',
+                    data: function (d) {
+                        return {
+                            draw: d.draw,
+                            start: d.start,
+                            length: d.length
+                        };
+                    }
                 },
+                processing: true,
+                serverSide: true,
                 select: {
                     style: 'multi',
                     selector: 'td.select-checkbox'

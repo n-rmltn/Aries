@@ -144,4 +144,24 @@ public class EmployeeService : IEmployeeService
             return false;
         }
     }
+
+    public async Task<DataTablesResponse<EmployeeViewModel>> GetPagedAsync(DataTablesRequest request)
+    {
+        var (data, totalRecords) = await _repository.GetPagedAsync(
+            request.Start,
+            request.Length);
+
+        return new DataTablesResponse<EmployeeViewModel>
+        {
+            Draw = request.Draw,
+            RecordsTotal = totalRecords,
+            RecordsFiltered = totalRecords,
+            Data = data.Select(e => new EmployeeViewModel
+            {
+                Id = e.Id,
+                Name = e.Name,
+                DepartmentName = e.Department?.Name ?? "No Department"
+            })
+        };
+    }
 }

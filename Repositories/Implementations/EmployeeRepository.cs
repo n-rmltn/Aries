@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Aries.Data;
 using Aries.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MySqlConnector;
+using System.Data;
 
 namespace Aries.Repositories;
 
@@ -70,14 +69,54 @@ public class EmployeeRepository : IEmployeeRepository
     }
 
     public async Task BulkEditAsync(IEnumerable<int> ids, int departmentId)
-{
-    var idsString = string.Join(",", ids);
-    var parameters = new[]
     {
-        new MySqlParameter("@p_Ids", idsString),
-        new MySqlParameter("@p_DepartmentId", departmentId)
-    };
-    await _context.Database
-        .ExecuteSqlRawAsync("CALL SP_Bulk_Edit_Employee(@p_Ids, @p_DepartmentId)", parameters);
-}
+        var idsString = string.Join(",", ids);
+        var parameters = new[]
+        {
+            new MySqlParameter("@p_Ids", idsString),
+            new MySqlParameter("@p_DepartmentId", departmentId)
+        };
+        await _context.Database
+            .ExecuteSqlRawAsync("CALL SP_Bulk_Edit_Employee(@p_Ids, @p_DepartmentId)", parameters);
+    }
+
+    // Lawd forgive the spaghetti
+    public async Task<(IEnumerable<Employee> Data, int TotalRecords)> GetPagedAsync(int start, int length)
+    {
+        var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync();
+        
+        using var command = connection.CreateCommand();
+        command.CommandText = "SP_Get_Employees_Paged";
+        command.CommandType = CommandType.StoredProcedure;
+        
+        command.Parameters.Add(new MySqlParameter("p_Start", start));
+        command.Parameters.Add(new MySqlParameter("p_Length", length));
+
+        var result = new List<Employee>();
+        int totalRecords = 0;
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            result.Add(new Employee
+            {
+                Id = reader.GetInt32("Id"),
+                Name = reader.GetString("Name"),
+                DepartmentId = reader.GetInt32("DepartmentId"),
+                Department = new Department
+                {
+                    Id = reader.GetInt32("DepartmentId"),
+                    Name = reader.GetString("DepartmentName")
+                }
+            });
+
+            if (result.Count == 1)
+            {
+                totalRecords = reader.GetInt32("TotalRecords");
+            }
+        }
+
+        return (result, totalRecords);
+    }
 }

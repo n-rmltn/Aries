@@ -39,11 +39,11 @@ public class EmployeeController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetEmployees()
-    {
-        var employees = await _employeeService.GetAllAsync();
-        return Json(new { data = employees });
-    }
+    // public async Task<IActionResult> GetEmployees()
+    // {
+    //     var employees = await _employeeService.GetAllAsync();
+    //     return Json(new { data = employees });
+    // }
 
     public async Task<IActionResult> Create()
     {
@@ -182,5 +182,20 @@ public class EmployeeController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetEmployees([FromQuery] DataTablesRequest request)
+    {
+        try
+        {
+            var response = await _employeeService.GetPagedAsync(request);
+            return Json(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting employees");
+            return StatusCode(500, new { error = "Internal server error" });
+        }
     }
 }

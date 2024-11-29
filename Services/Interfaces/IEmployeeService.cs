@@ -1,3 +1,5 @@
+using Aries.Models;
+
 namespace Aries.Services.Interfaces;
 
 public interface IEmployeeService
@@ -9,5 +11,6 @@ public interface IEmployeeService
     Task<bool> DeleteAsync(int id);
     Task<bool> BulkDeleteAsync(IEnumerable<int> ids);
     Task<bool> BulkEditAsync(IEnumerable<int> ids, int departmentId);
+    Task<DataTablesResponse<EmployeeViewModel>> GetPagedAsync(DataTablesRequest request);
 
 }

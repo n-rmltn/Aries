@@ -104,3 +104,29 @@ BEGIN
     SET DepartmentId = p_DepartmentId
     WHERE FIND_IN_SET(Id, p_Ids) > 0;
 END
+
+-- Lord help me
+DROP PROCEDURE IF EXISTS SP_Get_Employees_Paged;
+CREATE PROCEDURE SP_Get_Employees_Paged(
+    IN p_Start INT,
+    IN p_Length INT
+)
+BEGIN
+    DECLARE total_records INT;
+
+    -- record num
+    SELECT COUNT(*) INTO total_records
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentId = d.Id;
+
+    SELECT 
+        e.Id,
+        e.Name,
+        e.DepartmentId,
+        d.Name as DepartmentName,
+        total_records as TotalRecords
+    FROM Employees e
+    INNER JOIN Departments d ON e.DepartmentId = d.Id
+    ORDER BY e.Name ASC
+    LIMIT p_Start, p_Length;
+END;
