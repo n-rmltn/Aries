@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Aries.Models;
+using Aries.Models.DTOs;
 
 public interface IEmployeeRepository
 {
@@ -11,6 +12,5 @@ public interface IEmployeeRepository
     Task DeleteAsync(int id);
     Task BulkDeleteAsync(IEnumerable<int> ids);
     Task BulkEditAsync(IEnumerable<int> ids, int departmentId);
-    Task<(IEnumerable<Employee> Data, int TotalRecords, int FilteredRecords)> 
-    GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir);
+    Task<PagedResultDto<Employee>> GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir);
 }

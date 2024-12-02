@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Aries.Data;
 using Aries.Models;
+using Aries.Models.DTOs;
 using MySqlConnector;
 using System.Data;
 
@@ -81,8 +82,7 @@ public class EmployeeRepository : IEmployeeRepository
     }
 
     // Lawd forgive the spaghetti
-    public async Task<(IEnumerable<Employee> Data, int TotalRecords, int FilteredRecords)> 
-    GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir)
+    public async Task<PagedResultDto<Employee>> GetPagedAsync(int start, int length, string searchTerm, string orderName, string orderDir)
     {
         var connection = _context.Database.GetDbConnection();
         await connection.OpenAsync();
@@ -97,30 +97,33 @@ public class EmployeeRepository : IEmployeeRepository
         command.Parameters.Add(new MySqlParameter("p_OrderColumn", orderName));
         command.Parameters.Add(new MySqlParameter("p_OrderDir", orderDir));
         
-        var result = new List<Employee>();
-        int totalRecords = 0;
-        int filteredRecords = 0;
+        var result = new PagedResultDto<Employee>
+        {
+            Data = new List<Employee>()
+        };
         
         using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
         {
-            result.Add(new Employee
+            ((List<Employee>)result.Data).Add(new Employee
             {
                 Id = reader.GetInt32("Id"),
-                Name = reader.GetString("Name"),
+                Name = reader.GetString("Name"), 
                 DepartmentId = reader.GetInt32("DepartmentId"),
-                Department = new Department
+                Department = new Department 
                 {
                     Id = reader.GetInt32("DepartmentId"),
                     Name = reader.GetString("DepartmentName")
                 }
             });
-            if (result.Count == 1)
+            
+            if (result.TotalRecords == 0)
             {
-                totalRecords = reader.GetInt32("TotalRecords");
-                filteredRecords = reader.GetInt32("FilteredRecords");
+                result.TotalRecords = reader.GetInt32("TotalRecords");
+                result.FilteredRecords = reader.GetInt32("FilteredRecords");
             }
         }
-        return (result, totalRecords, filteredRecords);
+        
+        return result;
     }
 }

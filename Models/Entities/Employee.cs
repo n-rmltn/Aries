@@ -10,5 +10,4 @@ public class Employee
     
     // Nav
     public virtual Department Department { get; set; } = null!;
-    public int TotalRecords { get; set; }
 }
