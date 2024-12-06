@@ -1,8 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Aries.Models;
 
-namespace Aries.Repositories;
+namespace Aries.Repositories.Interfaces;
 
 public interface IDepartmentRepository
 {

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 using Aries.Models;
-using Aries.Repositories;
 using Aries.Services.Interfaces;
 
 namespace Aries.Controllers;

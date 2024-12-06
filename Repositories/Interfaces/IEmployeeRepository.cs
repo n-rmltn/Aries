@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Aries.Models;
 using Aries.Models.DTOs;
+
+namespace Aries.Repositories.Interfaces;
 
 public interface IEmployeeRepository
 {

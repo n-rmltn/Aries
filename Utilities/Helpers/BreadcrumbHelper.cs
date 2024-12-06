@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
 using Aries.Models;
+
+namespace Aries.Utilities.Helpers;
 
 public static class BreadcrumbHelper
 {

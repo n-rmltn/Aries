@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Aries.Data;
 using Aries.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MySqlConnector;
+using Aries.Repositories.Interfaces;
 
-namespace Aries.Repositories;
+namespace Aries.Repositories.Implementations;
 
 public class DepartmentRepository : IDepartmentRepository
 {
