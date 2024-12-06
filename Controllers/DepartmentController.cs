@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
+using Aries.Exceptions;
 using Aries.Services.Interfaces;
 using Aries.Models.Entities;
 
@@ -56,7 +57,8 @@ public class DepartmentController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var department = await _departmentService.GetByIdAsync(id);
-        if (department == null) return NotFound();
+        if (department == null) 
+            throw new NotFoundException($"Department with ID {id} not found");
         return View(department);
     }
 
