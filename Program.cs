@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 using Aries.Data;
 using Aries.Models;
+using Aries.Filters;
+using Aries.Middleware;
 using Aries.Services.Implementations;
 using Aries.Services.Interfaces;
 using Aries.Repositories.Implementations;
@@ -58,9 +60,14 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddControllers(options => 
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 var app = builder.Build();
 
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 app.UseAuthentication();
 
 // Configure the HTTP request pipeline.
