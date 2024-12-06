@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 using Aries.Models;
+using Aries.Models.Entities;
+using Aries.Models.ViewModels;
 using Aries.Repositories.Interfaces;
 using Aries.Services.Interfaces;
 

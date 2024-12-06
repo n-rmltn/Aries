@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Aries.Models;
+using Aries.Models.ViewModels;
 
 namespace Aries.Controllers;
 

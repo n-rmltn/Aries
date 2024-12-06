@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Aries.Data;
-using Aries.Models;
+using Aries.Models.ViewModels;
+using Aries.Models.Entities;
 using MySqlConnector;
 using Aries.Repositories.Interfaces;
 

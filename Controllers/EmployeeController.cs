@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 
 using Aries.Models;
+using Aries.Models.ViewModels;
 using Aries.Services.Interfaces;
 
 namespace Aries.Controllers;

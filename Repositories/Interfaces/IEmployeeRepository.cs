@@ -1,5 +1,6 @@
-using Aries.Models;
+using Aries.Models.ViewModels;
 using Aries.Models.DTOs;
+using Aries.Models.Entities;
 
 namespace Aries.Repositories.Interfaces;
 

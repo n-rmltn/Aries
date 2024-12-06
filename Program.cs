@@ -3,9 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 using Aries.Data;
 using Aries.Models;
-using Aries.Services;
+using Aries.Services.Implementations;
 using Aries.Services.Interfaces;
-using Aries.Repositories;
+using Aries.Repositories.Implementations;
+using Aries.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

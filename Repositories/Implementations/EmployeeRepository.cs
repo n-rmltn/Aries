@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Aries.Data;
-using Aries.Models;
+using Aries.Models.ViewModels;
 using Aries.Models.DTOs;
+using Aries.Models.Entities;
 using Aries.Repositories.Interfaces;
 using MySqlConnector;
 using System.Data;
 
-namespace Aries.Repositories;
+namespace Aries.Repositories.Implementations;
 
 public class EmployeeRepository : IEmployeeRepository
 {

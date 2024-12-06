@@ -1,4 +1,6 @@
 using Aries.Models;
+using Aries.Models.ViewModels;
+
 
 namespace Aries.Services.Interfaces;
 

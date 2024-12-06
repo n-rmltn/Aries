@@ -1,4 +1,5 @@
-using Aries.Models;
+using Aries.Models.ViewModels;
+using Aries.Models.Entities;
 using Aries.Repositories.Interfaces;
 using Aries.Services.Interfaces;
 

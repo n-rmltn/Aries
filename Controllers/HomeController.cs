@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Aries.Models;
+using Aries.Models.ViewModels;
 
 namespace Aries.Controllers;
 
