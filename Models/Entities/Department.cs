@@ -1,4 +1,4 @@
-namespace Aries.Models;
+namespace Aries.Models.Entities;
 
 public class Department
 {

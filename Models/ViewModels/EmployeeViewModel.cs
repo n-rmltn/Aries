@@ -1,3 +1,5 @@
+namespace Aries.Models.ViewModels;
+
 public class EmployeeViewModel
 {
     public int Id { get; set; }

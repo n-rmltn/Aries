@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Aries.Models;
+using Aries.Models.ViewModels;
+
+namespace Aries.Controllers;
+
 public class AccountController : Controller
 {
     private readonly SignInManager<IdentityUser> _signInManager;

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Aries.Models;
+namespace Aries.Models.ViewModels;
 
 public class LoginViewModel
 {

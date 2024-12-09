@@ -1,4 +1,4 @@
-namespace Aries.Models;
+namespace Aries.Models.Entities;
 
 public class Employee
 {
@@ -10,5 +10,4 @@ public class Employee
     
     // Nav
     public virtual Department Department { get; set; } = null!;
-    public int TotalRecords { get; set; }
 }

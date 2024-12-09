@@ -1,8 +1,9 @@
-using Aries.Models;
-using Aries.Repositories;
+using Aries.Models.ViewModels;
+using Aries.Models.Entities;
+using Aries.Repositories.Interfaces;
 using Aries.Services.Interfaces;
 
-namespace Aries.Services;
+namespace Aries.Services.Implementations;
 
 public class DepartmentService : IDepartmentService
 {

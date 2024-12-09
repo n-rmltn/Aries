@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 using Aries.Models;
-using Aries.Repositories;
+using Aries.Models.Entities;
+using Aries.Models.ViewModels;
+using Aries.Repositories.Interfaces;
 using Aries.Services.Interfaces;
 
-namespace Aries.Services;
+namespace Aries.Services.Implementations;
 
 public class EmployeeService : IEmployeeService
 {
